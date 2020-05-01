@@ -1,0 +1,9 @@
+users:
+- username: laksmi
+  groups: admins
+- username: arun
+  groups: admins
+- username: ahmed
+  groups: students
+- username: santos
+  groups: students

@@ -1,0 +1,36 @@
+---
+- name: create user on localhost
+  hosts: localhost
+  tasks:
+  - name: create user
+    user:
+      name: peter
+      generate_ssh_key: yes
+- name: create user on remote machines
+  hosts: ansible3
+  tasks:
+  - name: create user
+    user:
+      name: peter
+  - name: bypass to access the file without having permissions
+    slurp:
+      src: /home/peter/.ssh/id_rsa.pub
+    register: slurped_file
+    become: true
+    delegate_to: localhost
+  - name: copy slurped file to temporary key file
+    copy:
+      content: "{{ slurped_file.content }}"
+      dest: peter-temp.key
+    delegate_to: localhost
+  - name: copy public key to remote user authorized_keys
+    authorized_key:
+      user: peter
+      state: present
+      key: peter-temp.key
+#    become: true
+#    copy: 
+#      src: /home/peter/.ssh/id_rsa.pub
+#      dest: /home/peter/.ssh/tempkey.pub
+#  - name: copy temp key file to final destination
+#    shell: 'cat /home/peter/.ssh/tempkey.pub >> /home/peter/.ssh/authorized_keys'
