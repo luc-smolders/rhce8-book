@@ -1,0 +1,41 @@
+---
+- name: set up hosts that have an sdb device
+  hosts: all
+  tasks:
+  - name: getting out if there is no second disk
+    fail:
+      msg: there is no second disk
+    when: ansible_facts['devices']['sdb'] is not defined
+  - name: create a partition
+    parted:
+      device: /dev/sdb
+      number: 1
+      state: present
+  - name: create a volume group
+    lvg:
+      pvs: /dev/sdb1
+      vg: vgfiles
+  - name: create an LVM on big volume groups
+    lvol:
+      vg: vgfiles
+      lv: lvfiles
+      size: 6g
+    when:
+    - ansible_facts['lvm']['vgs']['vgfiles'] is defined
+    - ansible_facts['lvm']['vgs']['vgfiles']['size_g'] >= "5.00"
+  - name: create an LVM on small volume groups
+    lvol:
+      vg: vgfiles
+      lv: lvfiles
+      size: 3g
+    when:
+    - ansible_facts['lvm']['vgs']['vgfiles'] is defined
+    - ansible_facts['lvm']['vgs']['vgfiles']['size_g'] < "5.00"
+  - name: formatting the XFS filesystem
+    # filesystem:
+    debug:
+      msg: formatting the XFS filesystem
+  - name: mounting /dev/vgfile/lvfiles
+    # mount:
+    debug:
+      msg: mounting /dev/vgfile/lvfiles on /files

@@ -1,0 +1,16 @@
+---
+- name: get vg sizes
+  hosts: ansible2,ansible3
+  tasks:
+  - name: show vgroups sizes
+    debug:
+      msg: vgroup smaller than 5G
+    when: 
+    - ansible_facts['lvm']['vgs']['vgfiles'] is defined
+    - ansible_facts['lvm']['vgs']['vgfiles']['size_g'] <= 5.00
+  - name: show vgroups sizes
+    debug:
+      msg: vgroup bigger than 5G
+    when:
+    - ansible_facts['lvm']['vgs']['vgfiles'] is defined
+    - ansible_facts['lvm']['vgs']['vgfiles']['size_g'] >= 5.00

@@ -1,10 +1,16 @@
 ---
-- name: using variables
-  hosts: ansible1
+- name: Install custom facts
+  hosts: all
   vars:
-    ftp_package: vsftpd
+    remote_dir: /etc/ansible/facts.d
+    facts_file: listing68.fact
   tasks:
-  - name: install package
-    yum:
-      name: "{{ ftp_package }}"
-      state: latest
+  - name: create remote directory
+    file:
+      state: directory
+      recurse: yes
+      path: "{{ remote_dir }}"
+  - name: install new facts
+    copy:
+      src: "{{ facts_file }}"
+      dest: "{{ remote_dir }}"

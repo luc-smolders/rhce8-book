@@ -1,9 +1,10 @@
 ---
-- name: using a variable include file
+- name: using variables
   hosts: ansible1
-  vars_files: vars/common
+  vars:
+    ftp_package: vsftpd
   tasks:
   - name: install package
     yum:
-      name: "{{ my_package }}"
+      name: "{{ ftp_package }}"
       state: latest

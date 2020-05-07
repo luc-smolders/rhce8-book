@@ -1,12 +1,15 @@
 ---
-- name: install start and enable httpd
-  hosts: all
+- name: deploy vsftpd
+  hosts: ansible2
   tasks:
-  - name: install package
-    yum:
-    name: httpd
-      state: latest
-  - service:
-    name: httpd
-      state: started
-      enabled: yes
+  - name: install vsftpd
+    yum: name=vsftpd
+  - name: enable vsftpd
+    service: name=vsftpd enabled=true
+  - name: create readme file
+    copy:
+      content: "welcome to the FTP server\n"
+      dest: /var/ftp/pub/README
+      force: no
+      mode: 0444
+...

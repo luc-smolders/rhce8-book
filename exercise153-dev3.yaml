@@ -1,0 +1,26 @@
+---
+- name: get vg sizes
+  ignore_errors: yes
+  hosts: ansible2,ansible3
+  tasks:
+  - name: set vgroups sizes in variables
+    set_fact:
+      ans2size: "{{ ansible_facts['lvm']['vgs']['vgfiles']['size_g'] | int }}" 
+    when: 
+    - ansible_hostname == "ansible2"
+  - name: debug this
+    debug:
+      msg: the value of ans2size is {{ ans2size }}
+    when:
+    - ansible_hostname == "ansible2"
+  - name: show vgroups sizes
+    set_fact:
+      ans3size: "{{ ansible_facts['lvm']['vgs']['vgfiles']['size_g'] | int }}"
+    when:
+    - ansible_hostname == "ansible3"
+  - name: debug this
+    debug:
+      msg: the value of ans3size is {{ ans3size }}
+    when:
+    - ansible_hostname == "ansible3"
+  
